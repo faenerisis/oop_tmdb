@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your App Title</title>
+</head>
+<body>
+    <div class="search-container">
+        <form id="searchForm">
+            <label for="name">Enter a name:</label>
+            <input type="text" id="name" name="name" required>
+            <button type="button" onclick="search()">Search</button>
+        </form>
+    </div>
+
+    <div class="result-container" id="resultContainer">
+        <!-- Results will be dynamically updated here -->
+    </div>
+
+    <script>
+        async function search() {
+            const name = document.getElementById('name').value;
+            const response = await fetch(`/search?name=${name}`);
+            const result = await response.json();
+
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.innerHTML = ""; // Clear previous results
+
+            if (result.name) {
+
+                const pName = document.createElement('p');
+                pName.textContent = `Name: ${result.name}`;
+                resultContainer.appendChild(pName);
+
+                if (result.knownFor && result.knownFor.length > 0) {
+                    const pKnownFor = document.createElement('p');
+                    pKnownFor.textContent = 'Known For:';
+                    resultContainer.appendChild(pKnownFor);
+
+                    const ul = document.createElement('ul');
+                    result.knownFor.forEach(movie => {
+                        const li = document.createElement('li');
+                        li.textContent = movie;
+                        ul.appendChild(li);
+                    });
+
+                    resultContainer.appendChild(ul);
+                }
+            } else {
+                const pNoResults = document.createElement('p');
+                pNoResults.textContent = 'No results found.';
+                resultContainer.appendChild(pNoResults);
+            }
+        }
+    </script>
+</body>
+</html>
